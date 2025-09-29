@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stacking Algorithm Teacher</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #f7f9fa;
+      margin: 0;
+      padding: 0;
+      color: #222;
+    }
+    .container {
+      max-width: 800px;
+      margin: 40px auto;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      padding: 32px;
+    }
+    h1 {
+      text-align: center;
+      color: #2a7ae2;
+    }
+    .step {
+      margin-bottom: 32px;
+    }
+    .models {
+      display: flex;
+      justify-content: space-around;
+      margin: 24px 0;
+    }
+    .model {
+      background: #eaf1fb;
+      border-radius: 8px;
+      padding: 16px;
+      width: 180px;
+      text-align: center;
+      box-shadow: 0 1px 4px rgba(42,122,226,0.08);
+    }
+    .meta-model {
+      background: #ffe9b3;
+      border-radius: 8px;
+      padding: 16px;
+      width: 180px;
+      text-align: center;
+      box-shadow: 0 1px 4px rgba(255,193,7,0.12);
+      margin: 0 auto;
+    }
+    .dataset {
+      background: #f3f3f3;
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 16px;
+      font-size: 15px;
+    }
+    .prediction-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 16px;
+    }
+    .prediction-table th, .prediction-table td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: center;
+    }
+    .prediction-table th {
+      background: #eaf1fb;
+    }
+    .explanation {
+      background: #eaf1fb;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 24px;
+    }
+    .btn {
+      background: #2a7ae2;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 12px;
+      transition: background 0.2s;
+    }
+    .btn:hover {
+      background: #1a5bb8;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Learn Stacking in Machine Learning</h1>
+    <div class="explanation">
+      <strong>What is Stacking?</strong><br>
+      Stacking (stacked generalization) is an advanced ensemble learning technique. It combines predictions from multiple diverse models (base learners) and uses a meta-model to learn how best to combine these predictions for improved accuracy.<br><br>
+      <strong>Why use stacking?</strong><br>
+      Different models have different strengths and weaknesses. By combining them, stacking can correct individual errors and generalize better to unseen data.<br><br>
+      <strong>How does stacking work?</strong><br>
+      1. Train several base models on the same dataset.<br>
+      2. Collect their predictions (often on a hold-out set).<br>
+      3. Train a meta-model using these predictions as input features.<br>
+      4. The meta-model learns to weigh and combine base model outputs for the final prediction.<br><br>
+      <strong>Applications:</strong> Stacking is used in competitions (like Kaggle), fraud detection, medical diagnosis, and any scenario where maximizing predictive accuracy is important.<br>
+      <strong>Limitations:</strong> Stacking can be computationally expensive and may overfit if not carefully validated.
+    </div>
+    <div class="step" id="step1">
+      <h2>Step 1: The Dataset</h2>
+      <div class="dataset" id="dataset"></div>
+      <button class="btn" onclick="showStep(2)">Next: Train Base Models</button>
+    </div>
+    <div class="step" id="step2" style="display:none;">
+      <h2>Step 2: Base Models Make Predictions</h2>
+      <div class="explanation">
+        Each base model learns patterns in the data differently. Sometimes, they make mistakes on different samples. Below, you can see their predictions and errors compared to the true labels.
+      </div>
+      <div class="models">
+        <div class="model">
+          <strong>Model A<br>(Decision Tree)</strong>
+          <div id="modelA"></div>
+          <div id="errorA" style="margin-top:8px;"></div>
+        </div>
+        <div class="model">
+          <strong>Model B<br>(KNN)</strong>
+          <div id="modelB"></div>
+          <div id="errorB" style="margin-top:8px;"></div>
+        </div>
+        <div class="model">
+          <strong>Model C<br>(Logistic Regression)</strong>
+          <div id="modelC"></div>
+          <div id="errorC" style="margin-top:8px;"></div>
+        </div>
+      </div>
+      <button class="btn" onclick="showStep(3)">Next: Meta-Model</button>
+    </div>
+    <div class="step" id="step3" style="display:none;">
+      <h2>Step 3: Meta-Model Combines Predictions</h2>
+      <div class="explanation">
+        The meta-model takes the predictions of all base models as input features. It learns which models are more reliable for certain samples and how to best combine their outputs.<br><br>
+        In practice, the meta-model can be any machine learning algorithm (often a simple one like logistic regression). Here, we use a majority vote for demonstration.
+      </div>
+      <div class="meta-model">
+        <strong>Meta-Model<br>(Logistic Regression)</strong>
+        <div id="metaModel"></div>
+      </div>
+      <button class="btn" onclick="showStep(4)">Next: Final Prediction</button>
+    </div>
+    <div class="step" id="step4" style="display:none;">
+      <h2>Step 4: Final Prediction & Insights</h2>
+      <div class="explanation" id="finalExplanation"></div>
+      <div class="explanation">
+        <strong>Real-World Use:</strong> Stacking is popular in data science competitions and industries where accuracy is critical. It is often used with cross-validation to avoid overfitting.<br><br>
+        <strong>Limitations:</strong> Stacking requires careful validation and can be slow to train. The choice of base models and meta-model is important.<br><br>
+        <strong>Try it yourself:</strong> In real projects, you can use libraries like <a href="https://scikit-learn.org/stable/modules/ensemble.html#stacking" target="_blank">scikit-learn</a> to implement stacking with your own data.
+      </div>
+  <button class="btn" onclick="showStep(1)">Restart</button>
+    </div>
+
+  </div>
+  <script>
+    // Example dataset: binary classification (feature X, label Y)
+    const dataset = [
+      { x: 1, y: 0 },
+      { x: 2, y: 0 },
+      { x: 3, y: 0 },
+      { x: 4, y: 1 },
+      { x: 5, y: 1 },
+      { x: 6, y: 1 }
+    ];
+
+    // Simulated base model predictions
+    function getBaseModelPredictions() {
+      // Decision Tree: threshold at x=3.5
+      const modelA = dataset.map(d => d.x > 3.5 ? 1 : 0);
+      // KNN: threshold at x=4.5
+      const modelB = dataset.map(d => d.x > 4.5 ? 1 : 0);
+      // Logistic Regression: smooth threshold at x=3
+      const modelC = dataset.map(d => d.x > 3 ? 1 : 0);
+      return { modelA, modelB, modelC };
+    }
+
+    // Meta-model: majority vote (for simplicity)
+    function getMetaModelPredictions(base) {
+      return base.modelA.map((_, i) => {
+        const votes = base.modelA[i] + base.modelB[i] + base.modelC[i];
+        return votes >= 2 ? 1 : 0;
+      });
+    }
+
+    function showStep(step) {
+      for (let i = 1; i <= 4; i++) {
+        const el = document.getElementById('step' + i);
+        if (el) el.style.display = (i === step) ? '' : 'none';
+      }
+      if (step === 1) renderDataset();
+      if (step === 2) renderBaseModels();
+      if (step === 3) renderMetaModel();
+      if (step === 4) renderFinal();
+    }
+    // ...existing code...
+
+    function renderDataset() {
+      let html = '<table class="prediction-table"><tr><th>Sample</th><th>Feature (x)</th><th>Label (y)</th></tr>';
+      dataset.forEach((d, i) => {
+        html += `<tr><td>${i+1}</td><td>${d.x}</td><td>${d.y}</td></tr>`;
+      });
+      html += '</table>';
+      document.getElementById('dataset').innerHTML = html;
+    }
+
+    function renderBaseModels() {
+      const base = getBaseModelPredictions();
+      let htmlA = '<table class="prediction-table"><tr><th>Sample</th><th>Prediction</th><th>Error?</th></tr>';
+      let htmlB = '<table class="prediction-table"><tr><th>Sample</th><th>Prediction</th><th>Error?</th></tr>';
+      let htmlC = '<table class="prediction-table"><tr><th>Sample</th><th>Prediction</th><th>Error?</th></tr>';
+      let errorsA = 0, errorsB = 0, errorsC = 0;
+      for (let i = 0; i < dataset.length; i++) {
+        const errA = base.modelA[i] !== dataset[i].y ? '❌' : '✔️';
+        const errB = base.modelB[i] !== dataset[i].y ? '❌' : '✔️';
+        const errC = base.modelC[i] !== dataset[i].y ? '❌' : '✔️';
+        if (errA === '❌') errorsA++;
+        if (errB === '❌') errorsB++;
+        if (errC === '❌') errorsC++;
+        htmlA += `<tr><td>${i+1}</td><td>${base.modelA[i]}</td><td>${errA}</td></tr>`;
+        htmlB += `<tr><td>${i+1}</td><td>${base.modelB[i]}</td><td>${errB}</td></tr>`;
+        htmlC += `<tr><td>${i+1}</td><td>${base.modelC[i]}</td><td>${errC}</td></tr>`;
+      }
+      htmlA += '</table>';
+      htmlB += '</table>';
+      htmlC += '</table>';
+      document.getElementById('modelA').innerHTML = htmlA;
+      document.getElementById('modelB').innerHTML = htmlB;
+      document.getElementById('modelC').innerHTML = htmlC;
+      document.getElementById('errorA').innerHTML = `<strong>Errors:</strong> ${errorsA}`;
+      document.getElementById('errorB').innerHTML = `<strong>Errors:</strong> ${errorsB}`;
+      document.getElementById('errorC').innerHTML = `<strong>Errors:</strong> ${errorsC}`;
+    }
+
+    function renderMetaModel() {
+      const base = getBaseModelPredictions();
+      const meta = getMetaModelPredictions(base);
+      let html = '<table class="prediction-table"><tr><th>Sample</th><th>Model A</th><th>Model B</th><th>Model C</th><th>Meta-Model Prediction</th><th>True Label</th><th>Error?</th></tr>';
+      let errorsMeta = 0;
+      for (let i = 0; i < dataset.length; i++) {
+        const err = meta[i] !== dataset[i].y ? '❌' : '✔️';
+        if (err === '❌') errorsMeta++;
+        html += `<tr><td>${i+1}</td><td>${base.modelA[i]}</td><td>${base.modelB[i]}</td><td>${base.modelC[i]}</td><td><strong>${meta[i]}</strong></td><td>${dataset[i].y}</td><td>${err}</td></tr>`;
+      }
+      html += '</table>';
+      html += `<div style="margin-top:8px;"><strong>Meta-Model Errors:</strong> ${errorsMeta}</div>`;
+      document.getElementById('metaModel').innerHTML = html;
+    }
+
+    function renderFinal() {
+      const base = getBaseModelPredictions();
+      const meta = getMetaModelPredictions(base);
+      let correctA = 0, correctB = 0, correctC = 0, correctMeta = 0;
+      for (let i = 0; i < dataset.length; i++) {
+        if (base.modelA[i] === dataset[i].y) correctA++;
+        if (base.modelB[i] === dataset[i].y) correctB++;
+        if (base.modelC[i] === dataset[i].y) correctC++;
+        if (meta[i] === dataset[i].y) correctMeta++;
+      }
+      const accA = (correctA / dataset.length * 100).toFixed(1);
+      const accB = (correctB / dataset.length * 100).toFixed(1);
+      const accC = (correctC / dataset.length * 100).toFixed(1);
+      const accMeta = (correctMeta / dataset.length * 100).toFixed(1);
+      let html = `<strong>Base Model Accuracies:</strong><br>
+        Decision Tree: ${accA}%<br>
+        KNN: ${accB}%<br>
+        Logistic Regression: ${accC}%<br><br>
+        <strong>Stacking (Meta-Model) Accuracy:</strong> ${accMeta}%<br><br>
+        <em>Notice how stacking can outperform individual models by combining their strengths and reducing errors.</em>`;
+      document.getElementById('finalExplanation').innerHTML = html;
+    }
+
+    // Initial render
+    showStep(1);
+  </script>
+</body>
+</html>
